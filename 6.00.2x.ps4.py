@@ -95,3 +95,55 @@ def simulationTwoDrugsDelayedTreatment(numTrials):
     numTrials: number of simulation runs to execute (an integer)
     """
     # TODO
+   
+    numSteps_01 = 150 
+    numSteps_02 = 300 
+    numSteps_03 = 150 
+    
+    #numList = []
+    histList = []
+    
+    for trials in range(numTrials):
+        
+        rViruses = [ResistantVirus(maxBirthProb, clearProb, resistances, mutProb) for i in range(numViruses)]
+        tPatient = TreatedPatient(rViruses[:], maxPop)
+        #tVPop = []
+
+        for i in range(numSteps_01):
+            tPatient.update()
+            #tVPop.append(tPatient.getTotalPop())
+            
+        tPatient.addPrescription('guttagonol')
+        
+        for i in range(numSteps_02):
+            tPatient.update()
+            #tVPop.append(tPatient.getTotalPop())
+            
+        tPatient.addPrescription('grimpex')
+        
+        for i in range(numSteps_03):
+            tPatient.update()
+            #tVPop.append(tPatient.getTotalPop())
+        
+        histList.append(tPatient.getTotalPop())
+        
+        if (trials % 100) == 0 :
+            print "Number of trials completed : " + str(trials)
+        
+    #for j in range(numTrials):
+    #        histList.append(numList[j][ numSteps_01 + numSteps_02 + numSteps03 - 1])
+   
+             
+    pylab.figure(1)
+    pylab.hist(histList , bins= 50, label = '300 Histogram')
+    pylab.xlabel('Total virus population')
+    pylab.ylabel('Number of trials')
+    pylab.title('300 Step simulation')
+    pylab.legend(loc = 'upper right')
+    pylab.show()
+    
+
+#simulationTwoDrugsDelayedTreatment(numViruses, maxPop, maxBirthProb, clearProb, resistances, mutProb, numTrials)
+#simulationDelayedTreatment(100, 1000, 0.2, 0.05, {'guttagonol':False}, 0.005, 1000)
+
+simulationTwoDrugsDelayedTreatment(100, 1000, 0.1, 0.05, {'guttagonol': False, 'grimpex': False}, 0.005, 1000)
