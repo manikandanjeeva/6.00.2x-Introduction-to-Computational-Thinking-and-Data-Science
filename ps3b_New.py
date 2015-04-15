@@ -524,3 +524,60 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
     """
 
     # TODO
+        numSteps = 150 
+    numList = []
+    numRList = []
+    tVxAxis = []
+    avgList = []
+    avgRList = []
+
+    
+    for trials in range(numTrials):
+        
+        rViruses = [ResistantVirus(maxBirthProb, clearProb, resistances, mutProb) for i in range(numViruses)]
+        tPatient = TreatedPatient(rViruses[:], maxPop)
+
+        tVPop = []
+        tVRPop = []
+                
+        for i in range(numSteps):
+            tPatient.update()
+            tVPop.append(tPatient.getTotalPop())
+            tVRPop.append(tPatient.getResistPop(['guttagonol']))
+            
+        tPatient.addPrescription('guttagonol')
+        
+        for i in range(numSteps):
+            tPatient.update()
+            tVPop.append(tPatient.getTotalPop())
+            tVRPop.append(tPatient.getResistPop(['guttagonol']))
+            
+        numList.append(tVPop)
+        numRList.append(tVRPop)
+        
+        
+    for i in range(300):
+        tVxAxis.append(i)
+        tempTot = 0
+        
+        for j in range(numTrials):
+            tempTot += numList[j][i]
+        
+        avgList.append(tempTot/float(numTrials))
+        
+        
+        tempTot = 0
+        
+        for j in range(numTrials):
+            tempTot += numRList[j][i]
+        
+        avgRList.append(tempTot/float(numTrials))
+        
+    pylab.figure(1)
+    pylab.plot(tVxAxis, avgList)
+    pylab.plot(tVxAxis, avgRList)
+    pylab.xlabel('Number of steps')
+    pylab.ylabel('Max virus population')
+    pylab.title('Simple virus distribution')
+    pylab.legend(loc = 'upper right')
+    pylab.show()
